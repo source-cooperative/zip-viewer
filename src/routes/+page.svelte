@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { page } from "$app/state";
+  import ZipViewer from "$lib/ZipViewer.svelte";
 
   const MAX_CONTENT_LENGTH_MB = 200;
 
@@ -43,7 +44,7 @@
 </svelte:head>
 
 {#if urlParam}
-  <!-- Display model here -->
+  <ZipViewer url={urlParam} />
 {:else}
   <div class="h-screen w-screen flex flex-col items-center justify-center">
     <div class="max-w-200 p-8">

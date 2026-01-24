@@ -3,6 +3,14 @@
 @import "@fontsource/ibm-plex-sans";
 @import "@fontsource/ibm-plex-sans/600.css";
 
+@font-face {
+  font-family: "Berkeley Mono";
+  src: url("https://source.coop/fonts/BerkeleyMono-Regular.woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap
+}
+
 @theme {
   --color-source-50: #eeeeee;
   --color-source-100: #dfdfdf;
@@ -17,7 +25,7 @@
   --color-source-950: #111111;
 
   --font-sans: "IBM Plex Sans", sans-serif;
-  --font-mono: "IBM Plex Mono", monospace;
+  --font-mono: "Berkeley Mono", monospace;
 }
 
 @layer theme {

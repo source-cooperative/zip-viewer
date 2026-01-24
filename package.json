@@ -41,6 +41,9 @@
     "vitest-browser-svelte": "^2.0.1"
   },
   "dependencies": {
-    "@fontsource/ibm-plex-sans": "^5.2.8"
+    "@fontsource/ibm-plex-sans": "^5.2.8",
+    "@lucide/svelte": "^0.563.1",
+    "@zip.js/zip.js": "^2.8.15",
+    "pretty-bytes": "^7.1.0"
   }
 }
