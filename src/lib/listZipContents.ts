@@ -1,12 +1,12 @@
-import type { Entry } from "@zip.js/zip.js";
+import type { Entry, FileEntry } from "@zip.js/zip.js";
 
 const listZipContents = (
   entries: Entry[],
   prefix: string,
-): { directories: string[]; files: Entry[] } => {
+): { directories: string[]; files: FileEntry[] } => {
   if (prefix.length > 0 && !prefix.endsWith("/")) prefix += "/";
 
-  const files: Entry[] = [];
+  const files: FileEntry[] = [];
   const directories = new Set<string>();
 
   for (const entry of entries) {
