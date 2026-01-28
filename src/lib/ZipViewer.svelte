@@ -1,13 +1,24 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { page } from "$app/state";
-  import { type Entry, type FileEntry, BlobWriter, HttpReader, ZipReader } from "@zip.js/zip.js";
+  import {
+    type Entry,
+    type FileEntry,
+    configure,
+    BlobWriter,
+    HttpReader,
+    ZipReader
+  } from "@zip.js/zip.js";
   import { ChevronRight, Download, File, FileArchive } from "@lucide/svelte";
   import prettyBytes from "pretty-bytes";
 
   import listZipContents from "$lib/listZipContents";
 
   let { url } = $props();
+
+  const MAX_FILE_SIZE = 50 * 1024 * 1024;
+
+  configure({ useWebWorkers: true });
 
   let zipFileUrl = $derived(new URL(url));
   let httpReader = new HttpReader(url);
@@ -30,6 +41,12 @@
   };
 
   const downloadFile = async (entry: FileEntry) => {
+    if (entry.uncompressedSize > MAX_FILE_SIZE) {
+      let maxFileSize = prettyBytes(MAX_FILE_SIZE).toLocaleUpperCase();
+      console.error(`File is too large to extract in browser; maximum file size is ${maxFileSize}`);
+      return;
+    }
+
     const blobWriter = new BlobWriter();
     const entryBlob = await entry.getData(blobWriter);
 
@@ -54,14 +71,13 @@
 </script>
 
 <div class="w-full h-full p-4 bg-source-100 dark:bg-source-900 text-lg font-mono">
-  <nav class="text-source-600 dark:text-source-300 border-b border-source-300 dark:border-source-600 pb-4">
+  <nav
+    class="text-source-600 dark:text-source-300 border-b border-source-300 dark:border-source-600 pb-4"
+  >
     <ol class="flex flex-row gap-2">
       <li class="shrink-0">
         {#if breadcrumbs.length > 0}
-          <a
-            href={getHref("")}
-            class="group  hover:text-inherit cursor-pointer no-underline"
-          >
+          <a href={getHref("")} class="group hover:text-inherit cursor-pointer no-underline">
             <FileArchive class="inline-block h-4" />
             <span class="underline hover:no-underline">{zipFileUrl.pathname.split("/").pop()}</span>
           </a>
@@ -108,14 +124,14 @@
       {/each}
       {#each results.files as file}
         {@const filename = file.filename.split("/").pop()}
-        {@const fileSize = prettyBytes(file.compressedSize, { maximumFractionDigits: 2 })}
+        {@const fileSize = prettyBytes(file.uncompressedSize, { maximumFractionDigits: 2 })}
         <li class="mt-2 flex flex-row gap-4 justify-between items-center">
           <div class="text-source-600 dark:text-source-300 flex-nowrap truncate">
             <File class="inline-block h-4" />
             {filename}
           </div>
           <div class="text-sm text-source-600 dark:text-source-300 shrink-0">
-            {fileSize.toLocaleUpperCase()} (compressed)
+            {fileSize.toLocaleUpperCase()}
             <button
               class="cursor-pointer bg-source-500 hover:bg-source-600 dark:hover:bg-source-400 text-source-50 hover:text-source-950 dark:hover:text-source-50 px-1 py-1.25 ml-1.5"
               title="Download {filename}"
