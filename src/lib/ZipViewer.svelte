@@ -3,20 +3,16 @@
   import { page } from "$app/state";
   import {
     type Entry,
-    type FileEntry,
     configure,
-    BlobWriter,
     HttpReader,
     ZipReader
   } from "@zip.js/zip.js";
-  import { ChevronRight, Download, File, FileArchive } from "@lucide/svelte";
+  import { ChevronRight, File, FileArchive } from "@lucide/svelte";
   import prettyBytes from "pretty-bytes";
 
   import listZipContents from "$lib/listZipContents";
 
   let { url } = $props();
-
-  const MAX_FILE_SIZE = 50 * 1024 * 1024;
 
   configure({ useWebWorkers: true });
 
@@ -38,19 +34,6 @@
       newUrl.searchParams.delete("prefix");
     }
     return newUrl.toString();
-  };
-
-  const downloadFile = async (entry: FileEntry) => {
-    const blobWriter = new BlobWriter();
-    const entryBlob = await entry.getData(blobWriter);
-
-    const url = URL.createObjectURL(entryBlob);
-    const downloadLink = document.createElement("a");
-    downloadLink.href = url;
-    downloadLink.download = entry.filename.split("/").pop() ?? entry.filename;
-    downloadLink.click();
-    downloadLink.remove();
-    URL.revokeObjectURL(url);
   };
 
   $effect(() => {
@@ -125,16 +108,6 @@
           </div>
           <div class="text-sm text-source-600 dark:text-source-300 shrink-0">
             {fileSize.toLocaleUpperCase()}
-            <button
-              class="cursor-pointer bg-source-500 hover:bg-source-600 dark:hover:bg-source-400 text-source-50 hover:text-source-950 dark:hover:text-source-50 disabled:bg-transparent disabled:hover:bg-transparent disabled:border disabled:border-source-500 disabled:border-dashed disabled:text-source-500 disabled:hover:text-source-500 disabled:cursor-not-allowed px-1 py-1.25 ml-1.5"
-              title={file.uncompressedSize > MAX_FILE_SIZE
-                ? "Download disabled; file too large"
-                : `Download ${filename}`}
-              onclick={() => downloadFile(file)}
-              disabled={file.uncompressedSize > MAX_FILE_SIZE}
-            >
-              <Download class="inline-block h-4" />
-            </button>
           </div>
         </li>
       {/each}
