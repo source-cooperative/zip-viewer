@@ -12,6 +12,8 @@
   let { url } = $props();
 
   const MAX_BROWSE_DEPTH = 10;
+  const MAX_DIRECTORIES_LISTED = 100;
+  const MAX_FILES_LISTED = 100;
 
   configure({ useWebWorkers: true });
 
@@ -89,39 +91,50 @@
   </nav>
   <div class="pt-2">
     <ol>
-      {#each zipContents.directories as directory}
-        {@const directoryName = directory.split("/").pop()}
-        <li class="mt-2 flex flex-row items-center">
-          {#if prefixDepth >= MAX_BROWSE_DEPTH}
-            <span class="text-source-600 dark:text-source-300 no-underline">
-              <Folder class="inline-block h-4" />
-              <span>{directoryName}</span>
-            </span>
-          {:else}
-            <a
-              href={getHref(directory)}
-              class="group text-source-600 dark:text-source-300 hover:text-inherit cursor-pointer no-underline"
-            >
-              <ChevronRight class="inline-block h-4" />
-              <span class="underline group-hover:no-underline">{directoryName}</span>
-            </a>
-          {/if}
-        </li>
+      {#each zipContents.directories as directory, index}
+        {#if index < MAX_DIRECTORIES_LISTED}
+          {@const directoryName = directory.split("/").pop()}
+          <li class="mt-2 flex flex-row items-center">
+            {#if prefixDepth >= MAX_BROWSE_DEPTH}
+              <span class="text-source-600 dark:text-source-300">
+                <Folder class="inline-block h-4" />
+                <span>{directoryName}</span>
+              </span>
+            {:else}
+              <a
+                href={getHref(directory)}
+                class="group text-source-600 dark:text-source-300 hover:text-inherit cursor-pointer no-underline"
+              >
+                <ChevronRight class="inline-block h-4" />
+                <span class="underline group-hover:no-underline">{directoryName}</span>
+              </a>
+            {/if}
+          </li>
+        {/if}
       {/each}
-      {#each zipContents.files as file}
-        {@const filename = file.filename.split("/").pop()}
-        {@const fileSize = prettyBytes(file.uncompressedSize, {
-          maximumFractionDigits: 2
-        }).toLocaleUpperCase()}
-        <li class="mt-2 flex flex-row gap-4 justify-between items-center">
-          <div class="text-source-600 dark:text-source-300 flex-nowrap truncate">
-            <File class="inline-block h-4" />
-            {filename}
-          </div>
-          <div class="text-sm text-source-600 dark:text-source-300 shrink-0">
-            {fileSize}
-          </div>
-        </li>
+      {#each zipContents.files as file, index}
+        {#if index < MAX_FILES_LISTED}
+          {@const filename = file.filename.split("/").pop()}
+          {@const fileSize = prettyBytes(file.uncompressedSize, {
+            maximumFractionDigits: 2
+          }).toLocaleUpperCase()}
+          <li class="mt-2 flex flex-row gap-4 justify-between items-center">
+            <div class="text-source-600 dark:text-source-300 flex-nowrap truncate">
+              <File class="inline-block h-4" />
+              {filename}
+            </div>
+            <div class="text-sm text-source-600 dark:text-source-300 shrink-0">
+              {fileSize}
+            </div>
+          </li>
+        {:else if index === MAX_FILES_LISTED}
+          <li class="mt-2 flex flex-row items-center">
+            <div class="text-source-600 dark:text-source-300">
+              <File class="inline-block h-4" />
+              <span>…</span>
+            </div>
+          </li>
+        {/if}
       {/each}
     </ol>
   </div>
