@@ -1,18 +1,18 @@
-# image-viewer
+# zip-viewer
 
-A simple web app to display a remote image file in a lightbox-style interface. Supported formats include JPEG, PNG, GIF, SVG, WebP, TIFF, AVIF, and BMP. Maximum allowed file size is 200 MB.
+A simple web app to display the contents of a remote ZIP file. Maximum allowed file size is 200 MB.
 
-Uses [OpenSeadragon](https://openseadragon.github.io) to display images, with TIFF support provided by way of the [GeoTIFFTileSource](https://github.com/pearcetm/GeoTIFFTileSource) plugin.
+Uses [zip.js](https://gildas-lormeau.github.io/zip.js) to read the file's directory metadata.
 
 ## How to use
 
-When the app is running, submit a valid remote image URL via query parameter `url`. For example:
+When the app is running, submit a valid remote ZIP file URL via query parameter `url`. For example:
 
 ```
-/?url=https://upload.wikimedia.org/wikipedia/commons/d/db/Tree_of_Life_-_Shaker_-_painted_by_Hannah_Cohoon.JPG
+/?url=https://data.source.coop/harvard-lil/gov-data/collections/data_gov/baffin-bay-region-narwhal-research-version-1/v1.zip
 ```
 
-Once the image loads, use the built-in controls to zoom, rotate the image, or enter full screen mode.
+Once the remote file loads, use the interface to navigate its compressed contents.
 
 ## Development setup
 
