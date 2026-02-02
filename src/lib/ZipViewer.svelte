@@ -9,7 +9,7 @@
   import getPrefixDepth from "$lib/getPrefixDepth";
   import listZipContents from "$lib/listZipContents";
 
-  let { url } = $props();
+  let { url }: { url: string } = $props();
 
   const MAX_BROWSE_DEPTH = 10;
   const MAX_DIRECTORIES_LISTED = 100;
@@ -18,7 +18,7 @@
   configure({ useWebWorkers: true });
 
   let zipFileUrl = $derived(new URL(url));
-  let httpReader = new HttpReader(url);
+  let httpReader = new HttpReader(url, { forceRangeRequests: true });
   let zipReader = new ZipReader(httpReader);
 
   let entries: Entry[] = $state([]);
