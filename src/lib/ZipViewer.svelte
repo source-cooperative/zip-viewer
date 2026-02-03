@@ -122,7 +122,7 @@
           <li class="mt-2 flex flex-row gap-4 justify-between items-center">
             <div class="text-source-600 dark:text-source-300 flex-nowrap truncate">
               <File class="inline-block h-4" />
-              {filename}
+              <span>{filename}</span>
             </div>
             <div class="text-sm text-source-600 dark:text-source-300 shrink-0">
               {fileSize}
