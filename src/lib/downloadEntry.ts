@@ -16,13 +16,7 @@ const logDebug = (...args: unknown[]): void => {
   console.debug("[zip-viewer][download]", ...args);
 };
 
-const getDownloadName = (filename: string): string => {
-  const cleaned = filename
-    .split("/")
-    .filter((segment) => segment.length > 0)
-    .join("__");
-  return cleaned.length > 0 ? cleaned : "download";
-};
+const getDownloadName = (filename: string): string => filename.split("/").pop();
 
 const streamEntryToDisk = async (entry: Entry): Promise<StreamAttempt> => {
   if (entry.directory) return "unsupported";
