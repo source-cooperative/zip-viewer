@@ -4,10 +4,14 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "copy:streamsaver": "node scripts/copy-streamsaver-assets.mjs",
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
+    "postinstall": "npm run copy:streamsaver",
+    "predev": "npm run copy:streamsaver",
+    "prebuild": "npm run copy:streamsaver",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "format": "prettier --write .",
@@ -44,6 +48,7 @@
     "@fontsource/ibm-plex-sans": "^5.2.8",
     "@lucide/svelte": "^0.563.1",
     "@zip.js/zip.js": "^2.8.15",
-    "pretty-bytes": "^7.1.0"
+    "pretty-bytes": "^7.1.0",
+    "streamsaver": "^2.0.6"
   }
 }

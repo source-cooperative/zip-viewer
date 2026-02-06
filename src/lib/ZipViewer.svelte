@@ -1,11 +1,17 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { page } from "$app/state";
-  import { type Entry, configure, HttpReader, ZipReader } from "@zip.js/zip.js";
-  import { ChevronRight, File, FileArchive, Folder } from "@lucide/svelte";
+  import {
+    type Entry,
+    configure,
+    HttpReader,
+    ZipReader
+  } from "@zip.js/zip.js";
+  import { ChevronRight, File, FileArchive, Folder, Download, Loader } from "@lucide/svelte";
   import prettyBytes from "pretty-bytes";
 
   import clampPrefix from "$lib/clampPrefix";
+  import { downloadEntryWithFallback } from "$lib/downloadEntry";
   import getPrefixDepth from "$lib/getPrefixDepth";
   import listZipContents from "$lib/listZipContents";
 
@@ -25,6 +31,7 @@
   let prefix: string = $state(
     clampPrefix(page.url.searchParams.get("prefix") ?? "", MAX_BROWSE_DEPTH)
   );
+  let downloadingFilenames: Set<string> = $state(new Set());
 
   let breadcrumbs: string[] = $derived(prefix.length > 0 ? prefix.split("/") : []);
   let zipContents = $derived(listZipContents(entries, prefix, MAX_BROWSE_DEPTH));
@@ -50,17 +57,35 @@
   onMount(async () => {
     entries = await zipReader.getEntries();
   });
+
+  const downloadEntry = async (entry: Entry): Promise<void> => {
+    if (entry.directory) return;
+    const { filename } = entry;
+    if (downloadingFilenames.has(filename)) return;
+
+    const nextDownloading = new Set(downloadingFilenames);
+    nextDownloading.add(filename);
+    downloadingFilenames = nextDownloading;
+
+    try {
+      await downloadEntryWithFallback(entry);
+    } finally {
+      const cleaned = new Set(downloadingFilenames);
+      cleaned.delete(filename);
+      downloadingFilenames = cleaned;
+    }
+  };
 </script>
 
 <div id="zip-viewer" class="w-full h-full p-4 text-lg font-mono">
-  <nav
-    id="zip-breadcrumbs"
-    class="border-b border-source-300 dark:border-source-600 pb-4"
-  >
+  <nav id="zip-breadcrumbs" class="border-b border-source-300 dark:border-source-600 pb-4">
     <ol class="flex flex-row gap-2">
       <li class="shrink-0">
         {#if breadcrumbs.length > 0}
-          <a href={getHref("")} class="text-source-600 dark:text-source-300 group hover:text-inherit cursor-pointer no-underline">
+          <a
+            href={getHref("")}
+            class="text-source-600 dark:text-source-300 group hover:text-inherit cursor-pointer no-underline"
+          >
             <FileArchive class="inline-block h-4" />
             <span class="underline hover:no-underline">{zipFileUrl.pathname.split("/").pop()}</span>
           </a>
@@ -122,10 +147,23 @@
           <li class="mt-2 flex flex-row gap-4 justify-between items-center">
             <div class="text-source-600 dark:text-source-300 flex-nowrap truncate">
               <File class="inline-block h-4" />
-              {filename}
+              <span>{filename}</span>
             </div>
-            <div class="text-sm text-source-600 dark:text-source-300 shrink-0">
-              {fileSize}
+            <div class="flex items-center gap-4 shrink-0">
+              <div class="text-sm text-source-600 dark:text-source-300 shrink-0">
+                {fileSize}
+              </div>
+              <button
+                class="inline-flex items-center gap-1 rounded border border-source-300 px-2 py-1 text-xs text-source-600 hover:text-inherit hover:border-source-400 dark:border-source-600 dark:text-source-300 dark:hover:border-source-500 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+                onclick={() => downloadEntry(file)}
+                disabled={downloadingFilenames.has(file.filename)}
+              >
+                {#if downloadingFilenames.has(file.filename)}
+                  <Loader class="h-3 animate-spin" />
+                {:else}
+                  <Download class="h-3" />
+                {/if}
+              </button>
             </div>
           </li>
         {:else if index === MAX_FILES_LISTED}
