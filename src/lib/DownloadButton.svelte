@@ -32,7 +32,7 @@
   disabled={downloadingFilenames.has(file.filename)}
 >
   {#if downloadingFilenames.has(file.filename)}
-    <Loader class="h-3 animate-spin" />
+    <Loader class="h-3 motion-safe:animate-spin" />
   {:else}
     <Download class="h-3" />
   {/if}
