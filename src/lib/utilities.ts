@@ -1,9 +1,15 @@
 import type { Entry, FileEntry } from "@zip.js/zip.js";
 
-import clampPrefix from "$lib/clampPrefix";
-import getPrefixDepth from "$lib/getPrefixDepth";
+export const clampPrefix = (prefix: string, maxDepth: number): string => {
+  const parts = prefix.split("/").filter(Boolean);
+  if (parts.length <= maxDepth) return prefix;
+  return parts.slice(0, maxDepth).join("/");
+};
 
-const listZipContents = (
+export const getPrefixDepth = (prefix: string): number =>
+  prefix.split("/").filter(Boolean).length;
+
+export const listZipContents = (
   entries: Entry[],
   prefix: string,
   maxDepth: number,
@@ -38,5 +44,3 @@ const listZipContents = (
     files: files.sort((a, b) => a.filename.localeCompare(b.filename)),
   };
 };
-
-export default listZipContents;

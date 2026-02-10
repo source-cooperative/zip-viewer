@@ -1,19 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { page } from "$app/state";
-  import {
-    type Entry,
-    configure,
-    HttpReader,
-    ZipReader
-  } from "@zip.js/zip.js";
+  import { type Entry, configure, HttpReader, ZipReader } from "@zip.js/zip.js";
   import { ChevronRight, File, FileArchive, Folder, Download, Loader } from "@lucide/svelte";
   import prettyBytes from "pretty-bytes";
 
-  import clampPrefix from "$lib/clampPrefix";
   import { downloadEntryWithFallback } from "$lib/downloadEntry";
-  import getPrefixDepth from "$lib/getPrefixDepth";
-  import listZipContents from "$lib/listZipContents";
+  import { clampPrefix, getPrefixDepth, listZipContents } from "$lib/utilities";
 
   let { url }: { url: string } = $props();
 
