@@ -51,7 +51,7 @@
   });
 </script>
 
-<div id="zip-viewer" class="w-full h-full p-4 text-xl font-mono">
+<div id="zip-viewer" class="w-full h-full p-4 text-2xl font-mono">
   <Breadcrumbs prefix={prefix} getHref={getHref} zipFileUrl={zipFileUrl} />
   <div id="zip-contents" class="pt-2">
     <ol>
@@ -61,7 +61,7 @@
           <li class="mt-2 flex flex-row items-center">
             {#if prefixDepth >= MAX_BROWSE_DEPTH}
               <span class="text-source-600 dark:text-source-300">
-                <Folder class="inline-block h-4" />
+                <Folder class="inline-block h-8" />
                 <span>{directoryName}</span>
               </span>
             {:else}
@@ -69,7 +69,7 @@
                 href={getHref(directory)}
                 class="group text-source-600 dark:text-source-300 hover:text-inherit cursor-pointer no-underline"
               >
-                <ChevronRight class="inline-block h-4" />
+                <ChevronRight class="inline-block h-8" />
                 <span class="underline group-hover:no-underline">{directoryName}</span>
               </a>
             {/if}
@@ -84,11 +84,11 @@
           }).toLocaleUpperCase()}
           <li class="mt-2 flex flex-row gap-4 justify-between items-center">
             <div class="text-source-600 dark:text-source-300 flex-nowrap truncate">
-              <File class="inline-block h-4" />
+              <File class="inline-block h-8" />
               <span>{filename}</span>
             </div>
             <div class="flex items-center gap-4 shrink-0">
-              <div class="text-base text-source-600 dark:text-source-300 shrink-0">
+              <div class="text-lg text-source-600 dark:text-source-300 shrink-0">
                 {fileSize}
               </div>
               <DownloadButton file={file} downloadingFilenames={downloadingFilenames} />
@@ -97,7 +97,7 @@
         {:else if index === MAX_FILES_LISTED}
           <li class="mt-2 flex flex-row items-center">
             <div class="text-source-600 dark:text-source-300">
-              <File class="inline-block h-4" />
+              <File class="inline-block h-8" />
               <span>…</span>
             </div>
           </li>

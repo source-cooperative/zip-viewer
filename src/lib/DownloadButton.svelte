@@ -30,10 +30,11 @@
   class="inline-flex items-center gap-1 rounded border border-source-300 px-2 py-1 text-sm text-source-600 hover:text-inherit hover:border-source-400 dark:border-source-600 dark:text-source-300 dark:hover:border-source-500 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
   onclick={() => downloadEntry(file)}
   disabled={downloadingFilenames.has(file.filename)}
+  title="Download file"
 >
   {#if downloadingFilenames.has(file.filename)}
-    <Loader class="h-3 motion-safe:animate-spin" />
+    <Loader class="h-4 motion-safe:animate-spin" />
   {:else}
-    <Download class="h-3" />
+    <Download class="h-4" />
   {/if}
 </button>

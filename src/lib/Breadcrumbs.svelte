@@ -18,19 +18,19 @@
           href={getHref("")}
           class="text-source-600 dark:text-source-300 group hover:text-inherit cursor-pointer no-underline"
         >
-          <FileArchive class="inline-block h-4" />
+          <FileArchive class="inline-block h-8" />
           <span class="underline hover:no-underline">{zipFileUrl.pathname.split("/").pop()}</span>
         </a>
       {:else}
         <span class="text-source-600 dark:text-source-300">
-          <FileArchive class="inline-block h-4" />
+          <FileArchive class="inline-block h-8" />
           {zipFileUrl.pathname.split("/").pop() ?? "root"}
         </span>
       {/if}
     </li>
     {#each breadcrumbs as breadcrumb}
       <li class="flex-nowrap truncate">
-        <ChevronRight class="inline-block h-4" />
+        <ChevronRight class="inline-block h-8" />
         {#if breadcrumb === breadcrumbs[breadcrumbs.length - 1]}
           <span class="text-source-600 dark:text-source-300">
             {breadcrumb}
