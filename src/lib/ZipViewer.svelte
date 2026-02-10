@@ -2,11 +2,11 @@
   import { onMount } from "svelte";
   import { page } from "$app/state";
   import { type Entry, configure, HttpReader, ZipReader } from "@zip.js/zip.js";
-  import { ChevronRight, File, Folder, Download, Loader } from "@lucide/svelte";
+  import { ChevronRight, File, Folder } from "@lucide/svelte";
   import prettyBytes from "pretty-bytes";
 
   import Breadcrumbs from "$lib/Breadcrumbs.svelte";
-  import { downloadEntryWithFallback } from "$lib/downloadEntry";
+  import DownloadButton from "$lib/DownloadButton.svelte";
   import { clampPrefix, getPrefixDepth, listZipContents } from "$lib/utilities";
 
   let { url }: { url: string } = $props();
@@ -49,24 +49,6 @@
   onMount(async () => {
     entries = await zipReader.getEntries();
   });
-
-  const downloadEntry = async (entry: Entry): Promise<void> => {
-    if (entry.directory) return;
-    const { filename } = entry;
-    if (downloadingFilenames.has(filename)) return;
-
-    const nextDownloading = new Set(downloadingFilenames);
-    nextDownloading.add(filename);
-    downloadingFilenames = nextDownloading;
-
-    try {
-      await downloadEntryWithFallback(entry);
-    } finally {
-      const cleaned = new Set(downloadingFilenames);
-      cleaned.delete(filename);
-      downloadingFilenames = cleaned;
-    }
-  };
 </script>
 
 <div id="zip-viewer" class="w-full h-full p-4 text-xl font-mono">
@@ -109,17 +91,7 @@
               <div class="text-base text-source-600 dark:text-source-300 shrink-0">
                 {fileSize}
               </div>
-              <button
-                class="inline-flex items-center gap-1 rounded border border-source-300 px-2 py-1 text-sm text-source-600 hover:text-inherit hover:border-source-400 dark:border-source-600 dark:text-source-300 dark:hover:border-source-500 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
-                onclick={() => downloadEntry(file)}
-                disabled={downloadingFilenames.has(file.filename)}
-              >
-                {#if downloadingFilenames.has(file.filename)}
-                  <Loader class="h-3 animate-spin" />
-                {:else}
-                  <Download class="h-3" />
-                {/if}
-              </button>
+              <DownloadButton file={file} downloadingFilenames={downloadingFilenames} />
             </div>
           </li>
         {:else if index === MAX_FILES_LISTED}
